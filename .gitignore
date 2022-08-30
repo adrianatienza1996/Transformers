@@ -152,4 +152,7 @@ cython_debug/
 #.idea/
 
 Datasets
+script.ipynb
+
+
 src/script.ipynb
