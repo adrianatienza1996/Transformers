@@ -144,6 +144,10 @@ dmypy.json
 # Cython debug symbols
 cython_debug/
 
+script.ipynb
+Datasets
+src/script.ipynb
+
 # PyCharm
 #  JetBrains specific template is maintainted in a separate JetBrains.gitignore that can
 #  be found at https://github.com/github/gitignore/blob/main/Global/JetBrains.gitignore
@@ -151,10 +155,5 @@ cython_debug/
 #  option (not recommended) you can uncomment the following to ignore the entire idea folder.
 #.idea/
 
-Datasets
 
 
-script.ipynb
-
-
-src/script.ipynb
