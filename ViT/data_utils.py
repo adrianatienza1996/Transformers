@@ -26,10 +26,10 @@ TRANSFORM_IMG_TEST = transforms.Compose([
 def get_data(train_root, test_root, batch_size):
 
     train_data = torchvision.datasets.ImageFolder(root=train_root, transform=TRANSFORM_IMG_TRAIN)
-    train_data_loader = data.DataLoader(train_data, batch_size=batch_size, shuffle=True, num_workers=16)
+    train_data_loader = data.DataLoader(train_data, batch_size=batch_size, shuffle=True)
 
     test_data = torchvision.datasets.ImageFolder(root=test_root, transform=TRANSFORM_IMG_TEST)
-    test_data_loader = data.DataLoader(test_data, batch_size=batch_size, shuffle=True, num_workers=16)
+    test_data_loader = data.DataLoader(test_data, batch_size=batch_size, shuffle=True)
 
     return train_data_loader, test_data_loader
 

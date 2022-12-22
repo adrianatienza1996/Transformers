@@ -1,5 +1,5 @@
-from src.ViT_model import ViT
-from src.data_utils_cv import *
+from model import ViT
+from data_utils import *
 
 from torchsummary import summary
 import torch
@@ -7,40 +7,80 @@ import torch.nn as nn
 from torch.optim import Adam
 import numpy as np
 
+from torch.utils.tensorboard import SummaryWriter
+
 from tqdm import tqdm
 device = "cuda" if torch.cuda.is_available() else "cpu"
 print(device)
 
-model = ViT(num_classes=365, num_blocks=6, num_heads=8, model_dim=768).to(device)
-summary(model, (3, 224, 224))
+#################################################################################################################################################################
+##########################################################  MODEL INITIALIZATION  ###############################################################################
+#################################################################################################################################################################
 
+model = ViT(num_classes=365, 
+            num_blocks=12, 
+            num_heads=8, 
+            model_dim=512).to(device)
+
+
+summary(model, (3, 224, 224))
 print("Model Loaded")
 
+#################################################################################################################################################################
+###########################################################  LOADING DATA  ######################################################################################
+#################################################################################################################################################################
+
+data_train_path = "C:/Users/adria/Desktop/Repositories/CV Datasets/Places365/Labeled/Train"
+data_test_path = "C:/Users/adria/Desktop/Repositories/CV Datasets/Places365/Labeled/Test"
+
+BS = 92
+
+tr_dl, val_dl = get_data(data_train_path, data_test_path, 72)
+
+#################################################################################################################################################################
+###########################################################  TRAINING LOOP HYPERPARAMETERS  #####################################################################
+#################################################################################################################################################################
+
+EPOCHS = 12
 optimizer = Adam(model.parameters(), lr=0.0001, betas=[0.9, 0.99])
-epochs = 12
-tr_dl, val_dl = get_data("/home/adrian/Desktop/Transformers/Datasets/Places365_2/Train", "/home/adrian/Desktop/Transformers/Datasets/Places365_2/Test", 92)
+
 
 loss_fn = nn.CrossEntropyLoss()
-best_test_loss = 999999
+best_test_loss = 9999
 
-for epoch in range(epochs):
+saved_model_path = "C:/Users/adria/Desktop/Repositories/Transformers/ViT/Saved_Model.vit.pth"
+
+writer = SummaryWriter(log_dir="ViT/logs/losses")
+
+#################################################################################################################################################################
+#################################################################  TRAINING LOOP   ##############################################################################
+#################################################################################################################################################################
+
+
+for epoch in range(EPOCHS):
     print("Epoch: ", str(epoch))
     epoch_train_loss, epoch_test_loss = [], []
+    pbar = tqdm(tr_dl)
     
-    for batch in tqdm(iter(tr_dl)):
+    for batch in pbar:
         batch_loss = train_batch(batch, model, optimizer, loss_fn)
         epoch_train_loss.append(batch_loss)
+        pbar.set_postfix(MSE=batch_loss)
 
     epoch_train_loss = np.array(epoch_train_loss).mean()
+    writer.add_scalar("Training Loss", epoch_train_loss, global_step=epoch)
 
-    for batch in tqdm(iter(val_dl)):
+    pbar = tqdm(val_dl)
+    for batch in pbar:
         batch_loss = test_batch(batch, model, loss_fn)
         epoch_test_loss.append(batch_loss)
+        pbar.set_postfix(MSE=batch_loss)
 
     epoch_test_loss = np.array(epoch_test_loss).mean()
+    writer.add_scalar("Validation Loss", epoch_test_loss, global_step=epoch)
 
     if epoch_test_loss < best_test_loss:
-        torch.save(model.to("cpu").state_dict(), "/home/adrian/Desktop/Transformers/Saved_Models/vit.pth")
+        torch.save(model.to("cpu").state_dict(), saved_model_path)
         model.to(device)
         best_test_loss = epoch_test_loss
     
