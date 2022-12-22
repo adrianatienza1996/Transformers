@@ -9,10 +9,10 @@ In this table it can be seen the number of trainable parameters for a set of dif
 It can be seen how this number of parameters perfectly match with the own implementation, both for the ViT-Base Config:
 
 <p align="center">
-  <img width="900" height="250" src="https://user-images.githubusercontent.com/72130704/188595442-99fde742-ed5a-4bec-90f7-1c00405833a1.png">
+  <img width="900" height="300" src="https://user-images.githubusercontent.com/72130704/188595442-99fde742-ed5a-4bec-90f7-1c00405833a1.png">
 </p>
 And for the ViT-Huge config:
 
 <p align="center">
-  <img width="900" height="250" src="https://user-images.githubusercontent.com/72130704/188597785-5c79d040-8241-4fc6-a8ab-370957923520.png">
+  <img width="900" height="300" src="https://user-images.githubusercontent.com/72130704/188597785-5c79d040-8241-4fc6-a8ab-370957923520.png">
 </p>
