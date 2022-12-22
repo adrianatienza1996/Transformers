@@ -21,7 +21,7 @@ epochs = 12
 tr_dl, val_dl = get_data("/home/adrian/Desktop/Transformers/Datasets/Places365_2/Train", "/home/adrian/Desktop/Transformers/Datasets/Places365_2/Test", 92)
 
 loss_fn = nn.CrossEntropyLoss()
-best_test_loss = 999999999999
+best_test_loss = 999999
 
 for epoch in range(epochs):
     print("Epoch: ", str(epoch))
