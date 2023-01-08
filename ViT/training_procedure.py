@@ -26,29 +26,38 @@ model = ViT(num_classes=365,
 summary(model, (3, 224, 224))
 print("Model Loaded")
 
+
+
+saved_model_path = "C:/Users/adria/Desktop/Repositories/Transformers/ViT/Saved_Model/vit.pth"
+model.load_state_dict(torch.load(saved_model_path))
+
+current_epoch = 5
 #################################################################################################################################################################
 ###########################################################  LOADING DATA  ######################################################################################
-#################################################################################################################################################################
+################################################################################################    #################################################################
 
 data_train_path = "C:/Users/adria/Desktop/Repositories/CV Datasets/Places365/Labeled/Train"
 data_test_path = "C:/Users/adria/Desktop/Repositories/CV Datasets/Places365/Labeled/Test"
 
-BS = 92
+BS = 72
 
-tr_dl, val_dl = get_data(data_train_path, data_test_path, 72)
+tr_dl, val_dl = get_data(data_train_path, data_test_path, BS)
 
 #################################################################################################################################################################
 ###########################################################  TRAINING LOOP HYPERPARAMETERS  #####################################################################
-#################################################################################################################################################################
+##############################################################################################################################################      ###################
 
-EPOCHS = 12
+EPOCHS = 12 - current_epoch
+
 optimizer = Adam(model.parameters(), lr=0.0001, betas=[0.9, 0.99])
 
+lr_scheduler = torch.optim.lr_scheduler.MultiStepLR(optimizer, 
+                                                    milestones=[int(0.75 * EPOCHS - current_epoch), int(0.9 * EPOCHS - current_epoch)], 
+                                                    gamma=0.1)
 
 loss_fn = nn.CrossEntropyLoss()
-best_test_loss = 9999
+best_test_loss = 2.220
 
-saved_model_path = "C:/Users/adria/Desktop/Repositories/Transformers/ViT/Saved_Model.vit.pth"
 
 writer = SummaryWriter(log_dir="ViT/logs/losses")
 
@@ -86,5 +95,6 @@ for epoch in range(EPOCHS):
     
     print("Training loss: " + str(epoch_train_loss)[:5])
     print("Test loss: " + str(epoch_test_loss)[:5])  
-
+    
+    lr_scheduler.step()
     print("Model Saved")
